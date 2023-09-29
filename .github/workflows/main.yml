@@ -1,0 +1,33 @@
+name: RDP server with Ngrok
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Ngrok
+        run: sudo apt install ngrok
+
+      - name: Start Ngrok
+        run: ngrok authtoken YOUR_NGROK_AUTH_TOKEN
+        run: ngrok tcp 3389
+
+      - name: Get Ngrok URL
+        run: echo "Your Ngrok URL is: https://${NGROK_URL}"
+
+      - name: Save Ngrok URL to file
+        run: echo "https://${NGROK_URL}" > ngrok_url.txt
+
+      - name: Upload Ngrok URL to GitHub
+        uses: actions/upload-artifact@v3
+        with:
+          name: ngrok_url
+          path: ngrok_url.txt
+          
